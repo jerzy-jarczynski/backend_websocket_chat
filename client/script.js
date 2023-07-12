@@ -23,6 +23,7 @@
       alert('Please enter a username');
     } else {
       userName = userNameInput.value;
+      socket.emit('join', { user: userName });
       loginForm.classList.remove('show');
       messagesSection.classList.add('show');
     }
