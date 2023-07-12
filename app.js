@@ -33,6 +33,7 @@ io.on('connection', (socket) => {
     console.log('We\'ve got a new pirate on board! Arrrr ' + user.user);
     users.push({ name: user.user, id: socket.id });
     console.log(users);
+    socket.broadcast.emit('newUser', user);
   });
   socket.on('message', (message) => {
     console.log('Oh, I\'ve got something from ' + socket.id);
@@ -43,9 +44,10 @@ io.on('connection', (socket) => {
     console.log('Oh, socket ' + socket.id + ' has left');
     const index = users.findIndex(item => item.id === socket.id);
     if (index !== -1) {
+      socket.broadcast.emit('removeUser', users[index]);
       users.splice(index, 1);
     }
-    console.log(users);    
+    console.log(users);
   });  
   console.log('I\'ve added a listener on message event \n');
 });

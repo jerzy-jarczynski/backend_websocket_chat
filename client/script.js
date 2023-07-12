@@ -3,6 +3,18 @@
 
   const socket = io();
   socket.on('message', ({ author, content }) => addMessage(author, content));
+  socket.on('newUser', (user) => {
+    addMessage(
+      'Chat Bot',
+      `${user.user} has joined the conversation!`
+    );
+  });
+  socket.on('removeUser', (user) => {
+    addMessage(
+      'Chat Bot',
+      `${user.name} has left the conversation... :(`
+    );
+  });
 
   // HTML references
   const loginForm = document.querySelector('#welcome-form');
@@ -40,6 +52,9 @@
         ${content}
       </div>
     `;
+    if(author === 'Chat Bot') {
+      message.classList.add('message--system');
+    }
     messagesList.appendChild(message);
   }
 
