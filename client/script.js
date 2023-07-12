@@ -1,6 +1,9 @@
 {
   "use strict";
 
+  const socket = io();
+  socket.on('message', ({ author, content }) => addMessage(author, content));
+
   // HTML references
   const loginForm = document.querySelector('#welcome-form');
   const messagesSection = document.querySelector('#messages-section');
@@ -42,10 +45,13 @@
   const sendMessage = (e) => {
     e.preventDefault();
     
+    let messageContent = messageContentInput.value;
+
     if (!messageContentInput.value) {
       alert('Please enter a message');
     } else {
-      addMessage(userName, messageContentInput.value);
+      addMessage(userName, messageContent);
+      socket.emit('message', { author: userName, content: messageContent });
       messageContentInput.value = '';
     }
   };

@@ -1,11 +1,12 @@
 const express = require('express');
+const socket = require('socket.io');
 const path = require('path');
-const db = require('./db');
 
 const app = express();
 
+const messages = [];
+
 // middlewares
-app.use(express.json());
 app.use(express.static(path.join(__dirname, '/client')));
 
 // catching bad links
@@ -19,6 +20,19 @@ app.get('*', (req, res) => {
 });
 
 // start server
-app.listen(process.env.PORT || 8000, () => {
+const server = app.listen(process.env.PORT || 8000, () => {
   console.log('Server is running on port: 8000');
+});
+
+const io = socket(server);
+
+io.on('connection', (socket) => {
+  console.log('New client! Its id – ' + socket.id);
+  socket.on('message', (message) => {
+    console.log('Oh, I\'ve got something from ' + socket.id);
+    messages.push(message);
+    socket.broadcast.emit('message', message);
+  });
+  socket.on('disconnect', () => { console.log('Oh, socket ' + socket.id + ' has left') });  
+  console.log('I\'ve added a listener on message event \n');
 });
